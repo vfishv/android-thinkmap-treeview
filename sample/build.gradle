@@ -1,8 +1,9 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
     //buildToolsVersion "29.0.3"
+    namespace "com.gyso.gysotreeviewapplication"
 
     defaultConfig {
         applicationId "com.gyso.gysotreeviewapplication"
@@ -34,9 +35,9 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation "com.google.android.material:material:1.6.1"
+    implementation "com.google.android.material:material:1.9.0"
     implementation project(path: ':library')
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

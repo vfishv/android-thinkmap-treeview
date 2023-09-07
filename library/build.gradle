@@ -4,8 +4,9 @@ apply plugin: 'com.android.library'
 
 version = '1.0.1'
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
     //buildToolsVersion "29.0.3"
+    namespace "com.gyso.treeview"
 
     defaultConfig {
         minSdkVersion 21
@@ -34,10 +35,10 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     implementation 'androidx.dynamicanimation:dynamicanimation:1.0.0'
 }
 
