@@ -16,6 +16,14 @@ android {
         consumerProguardFiles "consumer-rules.pro"
     }
 
+    buildFeatures {
+        buildConfig = true
+        aidl = false
+        viewBinding = false
+        dataBinding = false
+        //buildFeatures.compose = false
+    }
+
     buildTypes {
         release {
             minifyEnabled false
