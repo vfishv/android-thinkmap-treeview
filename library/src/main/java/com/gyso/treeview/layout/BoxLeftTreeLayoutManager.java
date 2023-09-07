@@ -11,10 +11,10 @@ import com.gyso.treeview.model.NodeModel;
 import com.gyso.treeview.model.TreeModel;
 import com.gyso.treeview.util.ViewBox;
 
-public class CompactLeftTreeLayoutManager extends CompactRightTreeLayoutManager{
-    private static final String TAG = TableLeftTreeLayoutManager.class.getSimpleName();
+public class BoxLeftTreeLayoutManager extends BoxRightTreeLayoutManager{
+    private static final String TAG = BoxLeftTreeLayoutManager.class.getSimpleName();
     private boolean isJustCalculate;
-    public CompactLeftTreeLayoutManager(Context context, int spaceParentToChild, int spacePeerToPeer, BaseLine baseline) {
+    public BoxLeftTreeLayoutManager(Context context, int spaceParentToChild, int spacePeerToPeer, BaseLine baseline) {
         super(context, spaceParentToChild, spacePeerToPeer, baseline);
     }
 
@@ -76,4 +76,3 @@ public class CompactLeftTreeLayoutManager extends CompactRightTreeLayoutManager{
         }
     }
 }
-

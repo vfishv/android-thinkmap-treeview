@@ -8,6 +8,7 @@
 A custom tree view for Android,  designed for easy drawing some tree nodes (e.g. thind mind and tree nodes). Includes smoothly zoom, move, limit and center fix animation support, and allows easy extension so you can add your own child node's customs view and touch event detection.
 ```groovy
     dependencies {
+//请直接使用lib中的代码，1.0.0这个引用库很久没有更新了
     	implementation 'androidx.dynamicanimation:dynamicanimation:1.0.0'
    	implementation 'io.github.guaishoun:gyso-treeview:1.0.1'
    }
@@ -117,7 +118,14 @@ To use a tree view, you should do **5 steps** as follows:
    //choose a demo line or a customs line. StraightLine, PointedLine, DashLine, SmoothLine are available.
    Baseline line =  new DashLine(Color.parseColor("#4DB6AC"),8);
    //choose layoout manager. VerticalTreeLayoutManager,RightTreeLayoutManager are available.
-   TreeLayoutManager treeLayoutManager = new RightTreeLayoutManager(this,space_50dp,space_20dp,line);
+   TreeLayoutManager treeLayoutManager = new BoxRightTreeLayoutManager(this,space_50dp,space_20dp,line);
+
+    // TODO Other stable layout managers like below:
+    // new BoxDownTreeLayoutManager(this,space_50dp,space_20dp,line);
+    // new BoxLeftTreeLayoutManager(this,space_50dp,space_20dp,line);
+    // new BoxUpTreeLayoutManager(this,space_50dp,space_20dp,line);
+    // new BoxHorizonLeftAndRightLayoutManager(this,space_50dp,space_20dp,line);
+    // new BoxVerticalUpAndDownLayoutManager(this,space_50dp,space_20dp,line);
    ```
 
 3. setting adapter and  layout manager for your tree view.

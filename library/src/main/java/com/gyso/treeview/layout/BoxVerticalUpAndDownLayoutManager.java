@@ -13,19 +13,24 @@ import com.gyso.treeview.util.ViewBox;
 
 import java.util.LinkedList;
 
-public class HorizonLeftAndRightLayoutManager extends RightTreeLayoutManager {
-    private static final String TAG = HorizonLeftAndRightLayoutManager.class.getSimpleName();
+public class BoxVerticalUpAndDownLayoutManager extends BoxDownTreeLayoutManager {
+    private static final String TAG = CompactVerticalUpAndDownLayoutManager.class.getSimpleName();
     private boolean isJustCalculate;
-    public HorizonLeftAndRightLayoutManager(Context context, int spaceParentToChild, int spacePeerToPeer, BaseLine baseline) {
+    public BoxVerticalUpAndDownLayoutManager(Context context, int spaceParentToChild, int spacePeerToPeer, BaseLine baseline) {
         super(context, spaceParentToChild, spacePeerToPeer, baseline);
     }
+
+    @Override
+    public int getTreeLayoutType() {
+        return LAYOUT_TYPE_VERTICAL_DOWN_AND_UP;
+    }
+
     @Override
     public void onManagerFinishMeasureAllNodes(TreeViewContainer treeViewContainer) {
-        getPadding(treeViewContainer);
-        mContentViewBox.bottom += (paddingBox.bottom+paddingBox.top);
-        extraDeltaX = mContentViewBox.right;
-        mContentViewBox.right  += (paddingBox.left+paddingBox.right+extraDeltaX);
-        fixedViewBox.setValues(mContentViewBox.top,mContentViewBox.left,mContentViewBox.right,mContentViewBox.bottom);
+        extraDeltaY = mContentViewBox.bottom;
+        mContentViewBox.bottom += (paddingBox.bottom+paddingBox.top)+extraDeltaY;
+        mContentViewBox.right  += (paddingBox.left+paddingBox.right);
+        fixedViewBox.setValues(mContentViewBox);
         if(winHeight == 0 || winWidth==0){
             return;
         }
@@ -40,31 +45,9 @@ public class HorizonLeftAndRightLayoutManager extends RightTreeLayoutManager {
             fixedViewBox.right = (int)bw;
         }
         mFixedDx = (fixedViewBox.getWidth()-mContentViewBox.getWidth())/2;
-        mFixedDy = (fixedViewBox.getHeight()-mContentViewBox.getHeight())/2;
-
-        //compute floor start position
-        for (int i = 0; i <= floorMax.size(); i++) {
-            int fn = (i == floorMax.size())?floorMax.size():floorMax.keyAt(i);
-            int preStart = floorStart.get(fn - 1, 0);
-            int preMax = floorMax.get(fn - 1, 0);
-            int startPos = (fn==0?(mFixedDx + paddingBox.left):spaceParentToChild) + preStart + preMax;
-            floorStart.put(fn,startPos);
-        }
-
-        //compute deep start position
-        for (int i = 0; i <= deepMax.size(); i++) {
-            int dn = (i == deepMax.size())?deepMax.size():deepMax.keyAt(i);
-            int preStart = deepStart.get(dn - 1, 0);
-            int preMax = deepMax.get(dn - 1, 0);
-            int startPos = (dn==0?(mFixedDy + paddingBox.top):spacePeerToPeer) + preStart + preMax;
-            deepStart.put(dn,startPos);
-        }
+        mFixedDy = fixedViewBox.getHeight()/2;
     }
 
-    @Override
-    public int getTreeLayoutType() {
-        return LAYOUT_TYPE_HORIZON_LEFT_AND_RIGHT;
-    }
 
     @Override
     public void performLayout(final TreeViewContainer treeViewContainer) {
@@ -83,18 +66,18 @@ public class HorizonLeftAndRightLayoutManager extends RightTreeLayoutManager {
             int rootCy = rootNodeView.getTop()+rootNodeView.getMeasuredHeight()/2;
             //divide equally by two
             LinkedList<? extends NodeModel<?>> rootNodeChildNodes = rootNode.getChildNodes();
-            Point divideDy = getDivideDy(rootNode, treeViewContainer);
-            int centerAy = divideDy.x;
-            int centerBy = divideDy.y;
+            Point divideDx = getDivideDx(rootNode, treeViewContainer);
+            int centerAx = divideDx.x;
+            int centerBx = divideDx.y;
             int divider = rootNodeChildNodes.size()/2;
             int count = 0;
             for (NodeModel<?> node : rootNodeChildNodes) {
                 if(count<divider){
                     //move to mid
-                    node.traverseIncludeSelf(n -> moveDy(n,treeViewContainer, (rootCy - centerAy)));
+                    node.traverseIncludeSelf(n -> moveDx(n,treeViewContainer, (rootCx- centerAx)));
                 }else{
                     //move to other side
-                    node.traverseIncludeSelf(n -> mirrorByCxDy(n,treeViewContainer,rootCx, (rootCy - centerBy)));
+                    node.traverseIncludeSelf(n -> mirrorByCxDy(n,treeViewContainer,rootCy, (rootCx - centerBx)));
                 }
                 count++;
             }
@@ -102,7 +85,7 @@ public class HorizonLeftAndRightLayoutManager extends RightTreeLayoutManager {
         }
     }
 
-    private Point getDivideDy(NodeModel<?> rootNode,  TreeViewContainer treeViewContainer){
+    private Point getDivideDx(NodeModel<?> rootNode, TreeViewContainer treeViewContainer){
         LinkedList<? extends NodeModel<?>> rootNodeChildNodes = rootNode.getChildNodes();
         int divider = rootNodeChildNodes.size()/2;
         int count = 0;
@@ -118,47 +101,49 @@ public class HorizonLeftAndRightLayoutManager extends RightTreeLayoutManager {
             int left =currentNodeView.getLeft();
             int top = currentNodeView.getTop();
             int currentHeight = currentNodeView.getMeasuredHeight();
-            int currentWidth = currentNodeView.getMeasuredWidth();
+            int currentWidth =  currentNodeView.getMeasuredWidth();
             if(count<divider){
-                minA = Math.min(minA,top);
-                maxA = Math.max(maxA, top+currentHeight);
+                minA = Math.min(minA,left);
+                maxA = Math.max(maxA, left+currentWidth);
             }else{
-                minB = Math.min(minB,top);
-                maxB = Math.max(maxB, top+currentHeight);
+                minB = Math.min(minB,left);
+                maxB = Math.max(maxB, left+currentWidth);
             }
             count++;
         }
         return new Point((maxA+minA)/2,(maxB+minB)/2);
     }
 
-    private void  moveDy(NodeModel<?> currentNode, TreeViewContainer treeViewContainer, int deltaY){
+    private void moveDx(NodeModel<?> currentNode, TreeViewContainer treeViewContainer, int deltaX){
         TreeViewHolder<?> currentHolder = treeViewContainer.getTreeViewHolder(currentNode);
         View currentNodeView = currentHolder == null ? null : currentHolder.getView();
         if (currentNodeView == null) {
             throw new NullPointerException(" currentNodeView can not be null");
         }
+        currentHolder.setHolderLayoutType(LAYOUT_TYPE_VERTICAL_DOWN);
         int currentWidth = currentNodeView.getMeasuredWidth();
         int currentHeight = currentNodeView.getMeasuredHeight();
-        int left =currentNodeView.getLeft();
+        int left =deltaX+ currentNodeView.getLeft();
         int right = left+currentWidth;
-        int top = deltaY+ currentNodeView.getTop();
+        int top = currentNodeView.getTop();
         int bottom = top+currentHeight;
         ViewBox finalLocation = new ViewBox(top, left, bottom, right);
         onManagerLayoutNode(currentNode, currentNodeView, finalLocation, treeViewContainer);
     }
 
-    private void mirrorByCxDy(NodeModel<?> currentNode, TreeViewContainer treeViewContainer,int centerX, int deltaY){
+    private void mirrorByCxDy(NodeModel<?> currentNode, TreeViewContainer treeViewContainer,int centerY, int deltaX){
         TreeViewHolder<?> currentHolder = treeViewContainer.getTreeViewHolder(currentNode);
         View currentNodeView = currentHolder == null ? null : currentHolder.getView();
         if (currentNodeView == null) {
             throw new NullPointerException(" currentNodeView can not be null");
         }
+        currentHolder.setHolderLayoutType(LAYOUT_TYPE_VERTICAL_UP);
         int currentWidth = currentNodeView.getMeasuredWidth();
         int currentHeight = currentNodeView.getMeasuredHeight();
-        int left =centerX*2- currentNodeView.getLeft()-spaceParentToChild-currentWidth/2;
+        int left =deltaX+currentNodeView.getLeft();
         int right = left+currentWidth;
-        int top = deltaY+currentNodeView.getTop();
-        int bottom = top+currentHeight;
+        int bottom = centerY*2- currentNodeView.getTop();
+        int top =  centerY*2- currentNodeView.getBottom();
         ViewBox finalLocation = new ViewBox(top, left, bottom, right);
         onManagerLayoutNode(currentNode, currentNodeView, finalLocation, treeViewContainer);
     }

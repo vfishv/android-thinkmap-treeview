@@ -24,11 +24,18 @@ public class ViewBox {
         this.bottom = bottom;
     }
 
-    public void setValues(int top, int left, int right, int bottom) {
+    public void setValues(ViewBox viewBox) {
+        this.top = viewBox.top;
+        this.left = viewBox.left;
+        this.right = viewBox.right;
+        this.bottom = viewBox.bottom;
+    }
+
+    public void setValues(int top, int left,int bottom,int right) {
         this.top = top;
         this.left = left;
-        this.right = right;
         this.bottom = bottom;
+        this.right = right;
     }
 
     public static ViewBox getViewBox(View view) {
@@ -87,8 +94,8 @@ public class ViewBox {
         return new ViewBox(
                 (int)(top * radio),
                 (int)(left * radio),
-                (int)(right * radio),
-                (int)(bottom * radio)
+                (int)(bottom * radio),
+                (int)(right * radio)
               );
     }
 
@@ -99,8 +106,8 @@ public class ViewBox {
         return new ViewBox(
                 top + other.top,
                 left + other.left,
-                right + other.right,
-                bottom + other.bottom
+                bottom + other.bottom,
+                right + other.right
         );
     }
 
@@ -111,8 +118,8 @@ public class ViewBox {
         return new ViewBox(
                 top - other.top,
                 left - other.left,
-                right - other.right,
-                bottom - other.bottom
+                bottom - other.bottom,
+                right - other.right
                 );
     }
 
@@ -144,8 +151,8 @@ public class ViewBox {
         return "{" +
                 "t:" + top +
                 " l:" + left +
-                " r:" + right +
                 " b:" + bottom +
+                " r:" + right +
                 '}';
     }
 }

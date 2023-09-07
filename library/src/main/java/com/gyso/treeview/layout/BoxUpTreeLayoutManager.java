@@ -11,16 +11,15 @@ import com.gyso.treeview.model.NodeModel;
 import com.gyso.treeview.model.TreeModel;
 import com.gyso.treeview.util.ViewBox;
 
-public class CompactLeftTreeLayoutManager extends CompactRightTreeLayoutManager{
-    private static final String TAG = TableLeftTreeLayoutManager.class.getSimpleName();
+public class BoxUpTreeLayoutManager  extends BoxDownTreeLayoutManager {
+    private static final String TAG = BoxUpTreeLayoutManager.class.getSimpleName();
     private boolean isJustCalculate;
-    public CompactLeftTreeLayoutManager(Context context, int spaceParentToChild, int spacePeerToPeer, BaseLine baseline) {
+    public BoxUpTreeLayoutManager(Context context, int spaceParentToChild, int spacePeerToPeer, BaseLine baseline) {
         super(context, spaceParentToChild, spacePeerToPeer, baseline);
     }
-
     @Override
     public int getTreeLayoutType() {
-        return LAYOUT_TYPE_HORIZON_LEFT;
+        return LAYOUT_TYPE_VERTICAL_UP;
     }
 
     @Override
@@ -30,11 +29,11 @@ public class CompactLeftTreeLayoutManager extends CompactRightTreeLayoutManager{
         isJustCalculate = false;
         final TreeModel<?> mTreeModel = treeViewContainer.getTreeModel();
         if (mTreeModel != null) {
-            final int cx = fixedViewBox.getWidth()/2;
+            final int cy= fixedViewBox.getHeight()/2;
             mTreeModel.doTraversalNodes(new ITraversal<NodeModel<?>>() {
                 @Override
                 public void next(NodeModel<?> next) {
-                    mirrorByCx(next,treeViewContainer,cx);
+                    mirrorByCy(next,treeViewContainer,cy);
                 }
                 @Override
                 public void finish() {
@@ -44,16 +43,16 @@ public class CompactLeftTreeLayoutManager extends CompactRightTreeLayoutManager{
         }
     }
 
-    private void mirrorByCx(NodeModel<?> currentNode, TreeViewContainer treeViewContainer,int centerX){
+    private void mirrorByCy(NodeModel<?> currentNode, TreeViewContainer treeViewContainer,int centerY){
         TreeViewHolder<?> currentHolder = treeViewContainer.getTreeViewHolder(currentNode);
         View currentNodeView = currentHolder == null ? null : currentHolder.getView();
         if (currentNodeView == null) {
             throw new NullPointerException(" currentNodeView can not be null");
         }
-        int  left = centerX*2 - currentNodeView.getRight();
-        int right = centerX*2- currentNodeView.getLeft();
-        int top = currentNodeView.getTop();
-        int bottom =currentNodeView.getBottom();
+        int left =currentNodeView.getLeft();
+        int right = currentNodeView.getRight();
+        int bottom= centerY*2- currentNodeView.getTop();
+        int top  =  centerY*2- currentNodeView.getBottom();
         ViewBox finalLocation = new ViewBox(top, left, bottom, right);
         onManagerLayoutNode(currentNode, currentNodeView, finalLocation, treeViewContainer);
     }
@@ -76,4 +75,3 @@ public class CompactLeftTreeLayoutManager extends CompactRightTreeLayoutManager{
         }
     }
 }
-

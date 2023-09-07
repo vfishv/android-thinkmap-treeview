@@ -3,7 +3,6 @@ package com.gyso.treeview.layout;
 import android.content.Context;
 import android.view.View;
 
-import com.gyso.treeview.R;
 import com.gyso.treeview.TreeViewContainer;
 import com.gyso.treeview.adapter.TreeViewHolder;
 import com.gyso.treeview.algorithm.table.Table;
@@ -11,7 +10,6 @@ import com.gyso.treeview.line.BaseLine;
 import com.gyso.treeview.model.ITraversal;
 import com.gyso.treeview.model.NodeModel;
 import com.gyso.treeview.model.TreeModel;
-import com.gyso.treeview.util.DensityUtils;
 import com.gyso.treeview.util.ViewBox;
 
 /**
@@ -22,10 +20,10 @@ import com.gyso.treeview.util.ViewBox;
  * @Describe:
  * Vertically down layout the tree view
  */
-public class DownTreeLayoutManager extends TreeLayoutManager {
-    private static final String TAG = DownTreeLayoutManager.class.getSimpleName();
+public class TableDownTreeLayoutManager extends TreeLayoutManager {
+    private static final String TAG = TableDownTreeLayoutManager.class.getSimpleName();
     protected TreeLayoutManager.MeasureListener measureListener =null;
-    public DownTreeLayoutManager(Context context, int spaceParentToChild, int spacePeerToPeer, BaseLine baseline) {
+    public TableDownTreeLayoutManager(Context context, int spaceParentToChild, int spacePeerToPeer, BaseLine baseline) {
         super(context, spaceParentToChild, spacePeerToPeer, baseline);
     }
 
@@ -60,7 +58,7 @@ public class DownTreeLayoutManager extends TreeLayoutManager {
                     getPadding(treeViewContainer);
                     mContentViewBox.bottom += (paddingBox.bottom+paddingBox.top);
                     mContentViewBox.right  += (paddingBox.left+paddingBox.right);
-                    fixedViewBox.setValues(mContentViewBox.top,mContentViewBox.left,mContentViewBox.right,mContentViewBox.bottom);
+                    fixedViewBox.setValues(mContentViewBox);
                     if(winHeight == 0 || winWidth==0){
                         return;
                     }
@@ -107,23 +105,6 @@ public class DownTreeLayoutManager extends TreeLayoutManager {
     @Override
     public void performMeasure(TreeViewContainer treeViewContainer) {
         performMeasureAndListen(treeViewContainer,null);
-    }
-
-    /**
-     * set the padding box
-     * @param treeViewContainer tree view
-     */
-    protected void getPadding(TreeViewContainer treeViewContainer) {
-        if(treeViewContainer.getPaddingStart()>0){
-            paddingBox.setValues(
-                    treeViewContainer.getPaddingTop(),
-                    treeViewContainer.getPaddingLeft(),
-                    treeViewContainer.getPaddingRight(),
-                    treeViewContainer.getPaddingBottom());
-        }else{
-            int padding = DensityUtils.dp2px(treeViewContainer.getContext(),DEFAULT_CONTENT_PADDING_DP);
-            paddingBox.setValues(padding,padding,padding,padding);
-        }
     }
 
     public void measure(NodeModel<?> node, TreeViewContainer treeViewContainer) {
@@ -195,7 +176,17 @@ public class DownTreeLayoutManager extends TreeLayoutManager {
             deltaWidth -= spacePeerToPeer/2;
         }
 
-        int top = floorStart.get(floor)+extraDeltaY;
+        int top =extraDeltaY+(floor==0?floorStart.get(0):0);
+        if(currentNode.getParentNode()!=null){
+            NodeModel<?> parentNode = currentNode.getParentNode();
+            TreeViewHolder<?> parentHolder = treeViewContainer.getTreeViewHolder(parentNode);
+            View parentNodeView =  parentHolder==null?null:parentHolder.getView();
+            if(parentNodeView!=null){
+                top += parentNodeView.getBottom()+floor*spaceParentToChild;
+            }else{
+                top += paddingBox.top;
+            }
+        }
         int left  = deepStart.get(deep)+verticalCenterFix+deltaWidth+extraDeltaX;
         int bottom = top+currentHeight;
         int right = left+currentWidth;

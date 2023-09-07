@@ -3,6 +3,8 @@ package com.gyso.treeview.adapter;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Point;
+import android.graphics.PointF;
 
 /**
  * @Author: 怪兽N
@@ -50,10 +52,6 @@ public class DrawInfo {
      * viewport height
      */
     private int windowHeight;
-    /**
-     * layout type {@link com.gyso.treeview.layout.TreeLayoutManager#LAYOUT_TYPE_HORIZON_RIGHT #LAYOUT_TYPE_VERTICAL_DOWN}
-     */
-    private int layoutType;
 
     public Canvas getCanvas() {
         return canvas;
@@ -122,13 +120,5 @@ public class DrawInfo {
 
     public void setWindowHeight(int windowHeight) {
         this.windowHeight = windowHeight;
-    }
-
-    public int getLayoutType() {
-        return layoutType;
-    }
-
-    public void setLayoutType(int layoutType) {
-        this.layoutType = layoutType;
     }
 }

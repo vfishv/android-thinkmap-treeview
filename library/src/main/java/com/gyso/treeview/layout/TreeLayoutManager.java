@@ -27,6 +27,7 @@ import java.util.Map;
 
 public abstract class TreeLayoutManager {
     public static final String TAG = TreeLayoutManager.class.getSimpleName();
+    public static final int LAYOUT_TYPE_NONE = -1;
     public static final int LAYOUT_TYPE_HORIZON_RIGHT = 0;
     public static final int LAYOUT_TYPE_VERTICAL_DOWN = 1;
     public static final int LAYOUT_TYPE_FORCE_DIRECTED = 2;
@@ -138,6 +139,19 @@ public abstract class TreeLayoutManager {
 
     public abstract int getTreeLayoutType();
 
+    public void getPadding(TreeViewContainer treeViewContainer){
+        if(treeViewContainer.getPaddingStart()>0){
+            paddingBox.setValues(
+                    treeViewContainer.getPaddingTop(),
+                    treeViewContainer.getPaddingLeft(),
+                    treeViewContainer.getPaddingBottom(),
+                    treeViewContainer.getPaddingRight());
+        }else{
+            int padding = DensityUtils.dp2px(treeViewContainer.getContext(),DEFAULT_CONTENT_PADDING_DP);
+            paddingBox.setValues(padding,padding,padding,padding);
+        }
+    }
+
     /**
      * draw line between node and node by you decision, you can get all draw element drawInfo;
      * canvas->total canvas for this tree view
@@ -149,7 +163,10 @@ public abstract class TreeLayoutManager {
     public void performDrawLine(DrawInfo drawInfo){
         if(baseline!=null){
             baseline.draw(drawInfo);
+            return;
         }
+        baseline = new BaseLine();
+        baseline.draw(drawInfo);
     }
 
     /**

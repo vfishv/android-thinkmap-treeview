@@ -3,7 +3,6 @@ package com.gyso.treeview.layout;
 import android.content.Context;
 import android.view.View;
 
-import com.gyso.treeview.R;
 import com.gyso.treeview.TreeViewContainer;
 import com.gyso.treeview.adapter.TreeViewHolder;
 import com.gyso.treeview.algorithm.table.Table;
@@ -11,17 +10,16 @@ import com.gyso.treeview.line.BaseLine;
 import com.gyso.treeview.model.ITraversal;
 import com.gyso.treeview.model.NodeModel;
 import com.gyso.treeview.model.TreeModel;
-import com.gyso.treeview.util.DensityUtils;
 import com.gyso.treeview.util.TreeViewLog;
 import com.gyso.treeview.util.ViewBox;
 
 /**
  * guaishouN xw 674149099@qq.com
  */
-public class RightTreeLayoutManager extends TreeLayoutManager {
-    private static final String TAG = RightTreeLayoutManager.class.getSimpleName();
+public class TableRightTreeLayoutManager extends TreeLayoutManager {
+    private static final String TAG = TableRightTreeLayoutManager.class.getSimpleName();
 
-    public RightTreeLayoutManager(Context context, int spaceParentToChild, int spacePeerToPeer, BaseLine baseline) {
+    public TableRightTreeLayoutManager(Context context, int spaceParentToChild, int spacePeerToPeer, BaseLine baseline) {
         super(context, spaceParentToChild, spacePeerToPeer, baseline);
     }
 
@@ -62,7 +60,7 @@ public class RightTreeLayoutManager extends TreeLayoutManager {
         getPadding(treeViewContainer);
         mContentViewBox.bottom += (paddingBox.bottom+paddingBox.top);
         mContentViewBox.right  += (paddingBox.left+paddingBox.right);
-        fixedViewBox.setValues(mContentViewBox.top,mContentViewBox.left,mContentViewBox.right,mContentViewBox.bottom);
+        fixedViewBox.setValues(mContentViewBox);
         if(winHeight == 0 || winWidth==0){
             return;
         }
@@ -98,22 +96,6 @@ public class RightTreeLayoutManager extends TreeLayoutManager {
         }
     }
 
-    /**
-     * set the padding box
-     * @param treeViewContainer tree view
-     */
-    protected void getPadding(TreeViewContainer treeViewContainer) {
-        if(treeViewContainer.getPaddingStart()>0){
-            paddingBox.setValues(
-                    treeViewContainer.getPaddingTop(),
-                    treeViewContainer.getPaddingLeft(),
-                    treeViewContainer.getPaddingRight(),
-                    treeViewContainer.getPaddingBottom());
-        }else{
-            int padding = DensityUtils.dp2px(treeViewContainer.getContext(),DEFAULT_CONTENT_PADDING_DP);
-            paddingBox.setValues(padding,padding,padding,padding);
-        }
-    }
 
     private void measure(NodeModel<?> node, TreeViewContainer treeViewContainer) {
         TreeViewHolder<?> currentHolder = treeViewContainer.getTreeViewHolder(node);
@@ -184,7 +166,17 @@ public class RightTreeLayoutManager extends TreeLayoutManager {
         }
 
         int top  = deepStart.get(deep)+horizonCenterFix+deltaHeight+extraDeltaY;
-        int left = floorStart.get(floor)+extraDeltaX;
+        int left = extraDeltaX+(floor==0?floorStart.get(0):0);
+        if(currentNode.getParentNode()!=null){
+            NodeModel<?> parentNode = currentNode.getParentNode();
+            TreeViewHolder<?> parentHolder = treeViewContainer.getTreeViewHolder(parentNode);
+            View parentNodeView =  parentHolder==null?null:parentHolder.getView();
+            if(parentNodeView!=null){
+                left += parentNodeView.getRight()+floor*spaceParentToChild;
+            }else{
+                left += paddingBox.left;
+            }
+        }
         int bottom = top+currentHeight;
         int right = left+currentWidth;
 

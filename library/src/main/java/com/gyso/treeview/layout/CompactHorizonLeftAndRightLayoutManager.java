@@ -31,7 +31,7 @@ public class CompactHorizonLeftAndRightLayoutManager  extends CompactRightTreeLa
         mContentViewBox.bottom += (paddingBox.bottom+paddingBox.top);
         extraDeltaX = mContentViewBox.right;
         mContentViewBox.right  += (paddingBox.left+paddingBox.right+extraDeltaX);
-        fixedViewBox.setValues(mContentViewBox.top,mContentViewBox.left,mContentViewBox.right,mContentViewBox.bottom);
+        fixedViewBox.setValues(mContentViewBox);
         if(winHeight == 0 || winWidth==0){
             return;
         }
@@ -138,6 +138,7 @@ public class CompactHorizonLeftAndRightLayoutManager  extends CompactRightTreeLa
         if (currentNodeView == null) {
             throw new NullPointerException(" currentNodeView can not be null");
         }
+        currentHolder.setHolderLayoutType(LAYOUT_TYPE_HORIZON_RIGHT);
         int currentWidth = currentNodeView.getMeasuredWidth();
         int currentHeight = currentNodeView.getMeasuredHeight();
         int left =currentNodeView.getLeft();
@@ -154,12 +155,11 @@ public class CompactHorizonLeftAndRightLayoutManager  extends CompactRightTreeLa
         if (currentNodeView == null) {
             throw new NullPointerException(" currentNodeView can not be null");
         }
-        int currentWidth = currentNodeView.getMeasuredWidth();
-        int currentHeight = currentNodeView.getMeasuredHeight();
-        int left =centerX*2- currentNodeView.getLeft()-spaceParentToChild-currentWidth/2;
-        int right = left+currentWidth;
+        currentHolder.setHolderLayoutType(LAYOUT_TYPE_HORIZON_LEFT);
+        int right =centerX*2- currentNodeView.getLeft();
+        int left =centerX*2- currentNodeView.getRight();
         int top = deltaY+currentNodeView.getTop();
-        int bottom = top+currentHeight;
+        int bottom = deltaY+currentNodeView.getBottom();
         ViewBox finalLocation = new ViewBox(top, left, bottom, right);
         onManagerLayoutNode(currentNode, currentNodeView, finalLocation, treeViewContainer);
     }
